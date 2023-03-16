@@ -11,7 +11,8 @@ services:
     ports:
       - "8008:8000"
     environment:
-      - DATABASE_URL=postgresql://core_db_user:pLabn_4%c@db:5432/core_db
+      # - DATABASE_URL=postgresql://core_db_user:pLabn_4%c@db:5432/core_db(
+      # - SECRET_KEY=secret
     env_file:
       - ./.env
     depends_on:
