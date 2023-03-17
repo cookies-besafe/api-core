@@ -7,7 +7,12 @@ class User(ormar.Model):
         tablename = "users"
 
     id: int = ormar.Integer(primary_key=True)
-    phone: str = ormar.String(max_length=20, unique=True, nullable=False)
+    first_name: str = ormar.String(max_length=255, nullable=True)
+    last_name: str = ormar.String(max_length=255, nullable=True)
+    phone: str = ormar.String(max_length=20, unique=True, nullable=True)
     email: str = ormar.String(max_length=128, unique=True, nullable=False)
     telegram_nickname: str = ormar.String(max_length=255, nullable=True)
     home_address: str = ormar.String(max_length=500, nullable=True)
+    is_staff: str = ormar.Boolean(default=False)
+    email_veryfied: str = ormar.Boolean(default=False)
+    password: str = ormar.String(max_length=255, nullable=False)

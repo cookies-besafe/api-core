@@ -10,7 +10,7 @@ services:
       - ./:/var/www/api_core
     ports:
       - "8008:8000"
-    environment:
+    # environment:
       # - DATABASE_URL=postgresql://core_db_user:pLabn_4%c@db:5432/core_db(
       # - SECRET_KEY=secret
     env_file:

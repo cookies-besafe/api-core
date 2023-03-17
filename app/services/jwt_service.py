@@ -14,6 +14,9 @@ class JWTService:
             'telegram_nickname': self.user.telegram_nickname,
             'phone': self.user.phone,
             'home_address': self.user.home_address,
+            'first_name': self.user.first_name,
+            'last_name': self.user.last_name,
+            'is_staff': self.user.is_staff,
         }
         payload += additional_payload
         token = jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
@@ -21,4 +24,5 @@ class JWTService:
 
     @staticmethod
     def get_payload_from_token(token: str)-> dict:
+        token = token.split(' ')[1]
         return jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
