@@ -3,6 +3,7 @@ from fastapi import FastAPI, Depends
 from app.core.base_meta import database
 from app.models.user import User
 from app.controllers import authentication_controller
+from app.controllers import trusted_contacts_controller
 from app.controllers.admin import dashboard_controller
 
 
@@ -10,16 +11,17 @@ app = FastAPI(title="Emergency Button Core API")
 
 
 app.include_router(authentication_controller.router)
+app.include_router(trusted_contacts_controller.router)
 app.include_router(dashboard_controller.router)
 
 
 @app.get("/")
 async def root():
     # create a dummy entry
-    try:
-        await User.objects.get_or_create(email="test@test.com")
-    except asyncpg.exceptions.UndefinedTableError:
-        print('Please, migrate tables by "make migrate"')
+    # try:
+    #     await User.objects.get_or_create(email="test@test.com")
+    # except asyncpg.exceptions.UndefinedTableError:
+    #     print('Please, migrate tables by "make migrate"')
     return {'detail': 'Root'}
 
 
