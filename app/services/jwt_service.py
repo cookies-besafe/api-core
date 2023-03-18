@@ -1,6 +1,5 @@
 import jwt
 import datetime
-from time import timezone
 from app.models.user import User
 from app.configs.config import settings
 from fastapi import HTTPException
@@ -18,7 +17,7 @@ class JWTService:
             'first_name': user.first_name,
             'last_name': user.last_name,
             'is_staff': user.is_staff,
-            "exp": datetime.datetime.now(tz=timezone.utc) + datetime.timedelta(hours=72)
+            "exp": datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(hours=72)
         }
         payload.update(additional_payload)
         token = jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
