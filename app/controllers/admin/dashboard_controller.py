@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.models.user import User
-from app.helpers.dependencies import get_token_header
+from app.helpers.middlewares import jwt_auth_middleware
 
 router = APIRouter(
     prefix="/dashboard",
     tags=["dashboard"],
-    dependencies=[Depends(get_token_header)],
+    dependencies=[Depends(jwt_auth_middleware)],
     responses={404: {"description": "Not found"}},
 )
 

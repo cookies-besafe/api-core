@@ -1,28 +1,36 @@
 import jwt
+import datetime
+from time import timezone
 from app.models.user import User
 from app.configs.config import settings
+from fastapi import HTTPException
 
 
 class JWTService:
-    def __init__(self, user: User):
-        self.user = user
-
-    def create_token_by_user(self, additional_payload: dict={})-> str:
+    @staticmethod
+    def create_token_by_user(user, additional_payload: dict={})-> str:
         payload = {
-            'sub': self.user.id,
-            'email': self.user.email,
-            'telegram_nickname': self.user.telegram_nickname,
-            'phone': self.user.phone,
-            'home_address': self.user.home_address,
-            'first_name': self.user.first_name,
-            'last_name': self.user.last_name,
-            'is_staff': self.user.is_staff,
+            'sub': user.id,
+            'email': user.email,
+            'telegram_nickname': user.telegram_nickname,
+            'phone': user.phone,
+            'home_address': user.home_address,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'is_staff': user.is_staff,
+            "exp": datetime.datetime.now(tz=timezone.utc) + datetime.timedelta(hours=72)
         }
-        payload += additional_payload
+        payload.update(additional_payload)
         token = jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
         return token
 
     @staticmethod
     def get_payload_from_token(token: str)-> dict:
         token = token.split(' ')[1]
-        return jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+        try:
+            return jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+        except jwt.exceptions.ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Token is expired")
+        except jwt.exceptions.DecodeError:
+            raise HTTPException(status_code=401, detail="Incorrect token type!")
+            

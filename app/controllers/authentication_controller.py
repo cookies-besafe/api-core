@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, Header
 from app.models.user import User
-from app.helpers.dependencies import get_token_header
-from app.services.hasher_service import HasherService
 from app.services.jwt_service import JWTService
-from app.serializers.registration_serializer import RegistrationSerializer
+from app.services.hasher_service import HasherService
+from app.helpers.middlewares import jwt_auth_middleware
 from app.serializers.login_serializer import LoginSerializer
+from fastapi import APIRouter, Depends, HTTPException, Header
+from app.serializers.registration_serializer import RegistrationSerializer
 
 router = APIRouter(
     prefix="/api/auth",
@@ -13,10 +13,9 @@ router = APIRouter(
 )
 
 
-@router.get("/me", tags=["profile"], dependencies=[Depends(get_token_header)])
+@router.get("/me", tags=["profile"], dependencies=[Depends(jwt_auth_middleware)])
 async def me(authorization: str = Header()):
-    service = JWTService()
-    payload = service.get_payload_from_token(authorization)
+    payload = JWTService.get_payload_from_token(authorization)
     return payload
 
 
@@ -27,9 +26,8 @@ async def login(body: LoginSerializer):
         raise HTTPException(status_code=422, detail="Incorrect credentials, please try again!")
     if not HasherService.verify_password(body.password, user.password):
         raise HTTPException(status_code=422, detail="Incorrect password!")
-    service = JWTService()
     return {
-        'token': f"Bearer {service.create_token_by_user(user)}"
+        'token': f"Bearer {JWTService.create_token_by_user()}"
     }
 
 
@@ -44,9 +42,16 @@ async def register(body: RegistrationSerializer):
             home_address=body.home_address,
             password=body.password,
         )
-    service = JWTService()
     response = {
-        'user': user,
-        'token': f"Bearer {service.create_token_by_user(user)}"
+        'user': {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'phone': user.phone,
+            'email': user.email,
+            'telegram_nickname': user.telegram_nickname,
+            'home_address': user.home_address,
+        },
+        'token': f"Bearer {JWTService.create_token_by_user()}"
     }
     return response
