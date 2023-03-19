@@ -43,15 +43,16 @@ async def location_live_update(id: int, websocket: WebSocket, user: User=Depends
         connection = True
     while connection:
         data = await websocket.receive_text()
-        latest_translocation = await sos_request.translcoation_histories.order_by("-created_at").first()
-        delta = datetime.now() - latest_translocation.created_at
-        if delta.total_seconds() >= 30:         
-            await TranslocationHistory.objects.create(
-                lat=data.lat,
-                long=data.long,
-                sos_request=sos_request
-            )
-            response = json.dumps({
-                "status": f"Location updated and saved to DB. Latitude: {data.lat}, longitude: {data.long}"
-            })
-            await websocket.send_text(response)
+        if data:
+            latest_translocation = await sos_request.translcoation_histories.order_by("-created_at").first()
+            delta = datetime.now() - latest_translocation.created_at
+            if delta.total_seconds() >= 30:         
+                await TranslocationHistory.objects.create(
+                    lat=data.lat,
+                    long=data.long,
+                    sos_request=sos_request
+                )
+                response = json.dumps({
+                    "status": f"Location updated and saved to DB. Latitude: {data.lat}, longitude: {data.long}"
+                })
+                await websocket.send_text(response)
