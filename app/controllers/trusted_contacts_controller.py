@@ -18,12 +18,12 @@ router = APIRouter(
 )
 
 
-@router.get("/", tags=['index'], response_model=List[GetTrustedContactSerializer])
+@router.get("/", response_model=List[GetTrustedContactSerializer])
 async def index(user: User=Depends(jwt_auth_middleware)):
     return await user.trusted_contacts.all()
 
 
-@router.post('/bulk-store', tags=['bulk_store'], response_model=List[GetTrustedContactSerializer])
+@router.post('/bulk-store',  response_model=List[GetTrustedContactSerializer])
 async def bulk_store(body: List[CreateTrustedContactSerializer], user: User=Depends(jwt_auth_middleware)):
     for contact in body:
         await TrustedContact.objects.create(
@@ -36,7 +36,7 @@ async def bulk_store(body: List[CreateTrustedContactSerializer], user: User=Depe
     return await user.trusted_contacts.all()
 
 
-@router.patch('/bulk-update', tags=['bulk_update'], response_model=List[GetTrustedContactSerializer])
+@router.patch('/bulk-update', response_model=List[GetTrustedContactSerializer])
 async def bulk_update(body: List[BulkUpdateTrustedContactSerializer], user: User=Depends(jwt_auth_middleware)):
     for contact in body:
         trusted_contact = await user.trusted_contacts.get_or_none(pk=contact.id)
@@ -54,7 +54,7 @@ async def bulk_update(body: List[BulkUpdateTrustedContactSerializer], user: User
     return await user.trusted_contacts.all()
 
 
-@router.post('/', tags=['store'], response_model=GetTrustedContactSerializer)
+@router.post('/', response_model=GetTrustedContactSerializer)
 async def store(body: CreateTrustedContactSerializer, user: User=Depends(jwt_auth_middleware)):
     return await TrustedContact.objects.create(
         name=body.name,
@@ -65,7 +65,7 @@ async def store(body: CreateTrustedContactSerializer, user: User=Depends(jwt_aut
     )
 
 
-@router.patch("/{id}", tags=['update'], response_model=GetTrustedContactSerializer)
+@router.patch("/{id}", response_model=GetTrustedContactSerializer)
 async def update(id: int, body: UpdateTrustedContactSerializer, user: User=Depends(jwt_auth_middleware)):
     trusted_contact = await user.trusted_contacts.get_or_none(pk=id)
     if trusted_contact is None:
@@ -81,7 +81,7 @@ async def update(id: int, body: UpdateTrustedContactSerializer, user: User=Depen
     return await trusted_contact.update()
 
 
-@router.delete("/{id}", tags=['destroy'])
+@router.delete("/{id}")
 async def destroy(id: int, user: User=Depends(jwt_auth_middleware)):
     try:
         trusted_contact = await TrustedContact.objects.get(pk=id)
