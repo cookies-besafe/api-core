@@ -38,13 +38,17 @@ async def update_profile(body: UpdateProfileSerializer, user: User=Depends(jwt_a
     if user.phone is not None:
         user.phone = body.phone
     if user.password is not None:
-        user.password = body.password
+        user.password = HasherService.get_password_hash(body.password)
     if user.email is not None:
         user.email = body.email
     if user.home_address is not None:
         user.home_address = body.home_address
     if user.telegram_nickname is not None:
         user.telegram_nickname = body.telegram_nickname
+    if user.gender is not None:
+        user.gender = body.gender
+    if user.birth_date is not None:
+        user.birth_date = body.birth_date
     return await user.update()
 
 
@@ -69,6 +73,8 @@ async def register(body: RegistrationSerializer):
             email=body.email,
             telegram_nickname=body.telegram_nickname,
             home_address=body.home_address,
+            birth_date=body.birth_date,
+            gender=body.gender,
             password=HasherService.get_password_hash(body.password),
         )
     response = {
@@ -78,6 +84,8 @@ async def register(body: RegistrationSerializer):
             'last_name': user.last_name,
             'phone': user.phone,
             'email': user.email,
+            'birth_date': user.birth_date,
+            'gender': user.gender,
             'telegram_nickname': user.telegram_nickname,
             'home_address': user.home_address,
         },

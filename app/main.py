@@ -1,15 +1,21 @@
 from fastapi import FastAPI
 from app.core.base_meta import database
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from app.controllers import (
     authentication_controller,
     trusted_contacts_controller,
     shelters_controller,
     sos_request_controller
     )
-from app.controllers.admin import dashboard_controller
+from app.controllers.dashboard import dashboard_controller
 
 
 app = FastAPI(title="Emergency Button Core API")
+
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="app/templates")
 
 
 app.include_router(authentication_controller.router)
