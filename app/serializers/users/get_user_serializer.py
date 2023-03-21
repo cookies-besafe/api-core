@@ -1,5 +1,5 @@
+from datetime import datetime
 from pydantic import BaseModel
-from app.models.user import User
 
 class GetUserSerializer(BaseModel):
     id: int
@@ -9,3 +9,5 @@ class GetUserSerializer(BaseModel):
     last_name: str
     telegram_nickname: str
     home_address: str
+    birth_date: datetime
+    gender: str

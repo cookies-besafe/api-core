@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 class RegistrationSerializer(BaseModel):
@@ -8,3 +9,5 @@ class RegistrationSerializer(BaseModel):
     telegram_nickname: str
     home_address: str
     password: str
+    birth_date: datetime
+    gender: str

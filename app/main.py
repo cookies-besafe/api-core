@@ -1,10 +1,11 @@
-import asyncpg
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from app.core.base_meta import database
-from app.models.user import User
-from app.controllers import authentication_controller
-from app.controllers import trusted_contacts_controller
-from app.controllers import sos_request_controller
+from app.controllers import (
+    authentication_controller,
+    trusted_contacts_controller,
+    shelters_controller,
+    sos_request_controller
+    )
 from app.controllers.admin import dashboard_controller
 
 
@@ -14,6 +15,7 @@ app = FastAPI(title="Emergency Button Core API")
 app.include_router(authentication_controller.router)
 app.include_router(trusted_contacts_controller.router)
 app.include_router(sos_request_controller.router)
+app.include_router(shelters_controller.router)
 app.include_router(dashboard_controller.router)
 
 

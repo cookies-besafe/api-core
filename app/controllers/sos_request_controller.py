@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from typing import List
 from app.models.user import User
 from app.models.sos_request import SosRequest
 from fastapi import APIRouter, Depends, HTTPException, WebSocket
@@ -13,6 +14,12 @@ router = APIRouter(
     tags=["sos_request"],
     responses={404: {"description": "Not found"}},
 )
+
+
+@router.get('/', response_model=List[GetSosRequestSerializer])
+async def index(user: User=Depends(jwt_auth_middleware)):
+    return await user.sos_requests.all()
+
 
 @router.post("/", response_model=GetSosRequestSerializer)
 async def store(user: User=Depends(jwt_auth_middleware)):

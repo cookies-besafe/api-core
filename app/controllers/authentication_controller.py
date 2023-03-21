@@ -5,6 +5,7 @@ from app.helpers.middlewares import jwt_auth_middleware
 from app.serializers.authentication.login_serializer import LoginSerializer
 from fastapi import APIRouter, Depends, HTTPException, Header, Request
 from app.serializers.authentication.registration_serializer import RegistrationSerializer
+from app.serializers.authentication.update_profile_serialozer import UpdateProfileSerializer
 
 router = APIRouter(
     prefix="/api/auth",
@@ -26,6 +27,25 @@ async def me(user: User=Depends(jwt_auth_middleware)):
         "is_staff": user.is_staff,
         "email_veryfied": user.email_veryfied,
     }
+
+
+@router.patch("/me", tags=["profile.update"])
+async def update_profile(body: UpdateProfileSerializer, user: User=Depends(jwt_auth_middleware)):
+    if user.first_name is not None:
+        user.first_name = body.first_name
+    if user.last_name is not None:
+        user.last_name = body.last_name
+    if user.phone is not None:
+        user.phone = body.phone
+    if user.password is not None:
+        user.password = body.password
+    if user.email is not None:
+        user.email = body.email
+    if user.home_address is not None:
+        user.home_address = body.home_address
+    if user.telegram_nickname is not None:
+        user.telegram_nickname = body.telegram_nickname
+    return await user.update()
 
 
 @router.post("/login", tags=["login"])

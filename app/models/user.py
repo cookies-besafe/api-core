@@ -1,4 +1,5 @@
 import ormar
+from datetime import datetime
 from app.core.base_meta import BaseMeta
 
 
@@ -16,3 +17,5 @@ class User(ormar.Model):
     is_staff: str = ormar.Boolean(default=False)
     email_veryfied: str = ormar.Boolean(default=False)
     password: str = ormar.String(max_length=255, nullable=False)
+    gender: str = ormar.String(max_length=255, nullable=True)
+    birth_date: datetime = ormar.Date(nullable=True)
