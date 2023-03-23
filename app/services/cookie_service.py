@@ -10,3 +10,7 @@ class CookieService:
     @staticmethod
     def get_cookie(request: Request) -> str | None:
         return request.cookies.get('access_token', None)
+    
+    @staticmethod
+    def delete_cookie(response: Response) -> None:
+        response.set_cookie(key='access_token',value=None)

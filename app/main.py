@@ -8,7 +8,10 @@ from app.controllers import (
     shelters_controller,
     sos_request_controller
     )
-from app.controllers.dashboard import dashboard_controller
+from app.controllers.dashboard import (
+    authentication_controller,
+    dashboard_controller
+)
 
 
 app = FastAPI(title="Emergency Button Core API")
@@ -22,16 +25,16 @@ app.include_router(authentication_controller.router)
 app.include_router(trusted_contacts_controller.router)
 app.include_router(sos_request_controller.router)
 app.include_router(shelters_controller.router)
+app.include_router(authentication_controller.router)
 app.include_router(dashboard_controller.router)
 
 
 @app.get("/")
 async def root():
     # create a dummy entry
-    # try:
-    #     await User.objects.get_or_create(email="test@test.com")
-    # except asyncpg.exceptions.UndefinedTableError:
-    #     print('Please, migrate tables by "make migrate"')
+    # from app.models.user import User
+    # from app.services.hasher_service import HasherService
+    # await User.objects.get_or_create(email="admin@gmail.com", is_staff=True, password=HasherService.get_password_hash('admin'))
     return {'detail': 'Root'}
 
 
