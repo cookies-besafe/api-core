@@ -1,0 +1,32 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}
+Shelters
+{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h3>Edit new shelter: {{shelter.title}}</h3>
+            <form action="{{url_for('dashboard_shelters_update', page=page, id=shelter.id)}}" method="POST">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" value="{{shelter.title}}" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" name="address" value="{{shelter.address}}" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" name="phone" value="{{shelter.phone}}" required class="form-control">
+                </div>
+                <div class="form-group my-3">
+                    <button class="btn btn-warning w-100">Edit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

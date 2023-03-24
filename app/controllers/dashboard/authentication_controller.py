@@ -10,7 +10,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 router = APIRouter(
     prefix="/dashboard/auth",
-    tags=["dashboard"],
+    tags=["dashboard_auth"],
     responses={404: {"description": "Not found"}},
 )
 

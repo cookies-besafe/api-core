@@ -1,0 +1,54 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}
+Users
+{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="row">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Is stuff</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{user.email}} | {{user.first_name}} {{user.last_name}}</td>
+                                <td>
+                                    {% if user != current_user %}
+                                    <form action="{{url_for('dashboard_users_change_staff_status', id=user.id, page=page)}}" method="POST">
+                                        {% if user.is_staff %}
+                                        <button class="btn btn-danger">Disable staff perms</button>
+                                        {% else %}
+                                        <button class="btn btn-success">Enable staff perms</button>
+                                        {% endif %}
+                                    </form>
+                                    {% else %}
+                                    <button type="button" class="btn btn-secondary">This is you</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        {% if page > 1 %}
+                        <li class="page-item"><a class="page-link" href="{{url_for('dashboard_users_index', page=page-1)}}">Previous</a></li>
+                        {% endif %}
+                        {% if users_count > 0 %}
+                        <li class="page-item"><a class="page-link" href="{{url_for('dashboard_users_index', page=page+1)}}">Next</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
