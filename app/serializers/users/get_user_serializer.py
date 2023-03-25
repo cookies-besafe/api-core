@@ -3,11 +3,11 @@ from pydantic import BaseModel
 
 class GetUserSerializer(BaseModel):
     id: int
-    phone: str
-    email: str
-    first_name: str
-    last_name: str
-    telegram_nickname: str
-    home_address: str
-    birth_date: datetime
-    gender: str
+    phone: str | None
+    email: str | None
+    first_name: str | None
+    last_name: str | None
+    telegram_nickname: str | None
+    home_address: str | None
+    birth_date: datetime | None
+    gender: str | None

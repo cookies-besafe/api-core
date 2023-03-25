@@ -1,4 +1,5 @@
 from app.models.user import User
+from asyncpg.exceptions import UniqueViolationError
 from app.services.jwt_service import JWTService
 from app.services.hasher_service import HasherService
 from app.helpers.middlewares import jwt_auth_middleware
@@ -22,6 +23,8 @@ async def me(user: User=Depends(jwt_auth_middleware)):
         "last_name": user.last_name,
         "phone": user.phone,
         "email": user.email,
+        "gender": user.gender,
+        "birth_date": user.birth_date,
         "telegram_nickname": user.telegram_nickname,
         "home_address": user.home_address,
         "is_staff": user.is_staff,
@@ -66,7 +69,8 @@ async def login(body: LoginSerializer):
 
 @router.post("/register", tags=["register"])
 async def register(body: RegistrationSerializer):
-    user = await User.objects.create(
+    try:
+        user = await User.objects.create(
             first_name=body.first_name,
             last_name=body.last_name,
             phone=body.phone,
@@ -77,18 +81,20 @@ async def register(body: RegistrationSerializer):
             gender=body.gender,
             password=HasherService.get_password_hash(body.password),
         )
-    response = {
-        'user': {
-            'id': user.id,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'phone': user.phone,
-            'email': user.email,
-            'birth_date': user.birth_date,
-            'gender': user.gender,
-            'telegram_nickname': user.telegram_nickname,
-            'home_address': user.home_address,
-        },
-        'token': f"Bearer {JWTService.create_token_by_user(user)}"
-    }
-    return response
+        response = {
+            'user': {
+                'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'phone': user.phone,
+                'email': user.email,
+                'birth_date': user.birth_date,
+                'gender': user.gender,
+                'telegram_nickname': user.telegram_nickname,
+                'home_address': user.home_address,
+            },
+            'token': f"Bearer {JWTService.create_token_by_user(user)}"
+        }
+        return response
+    except UniqueViolationError:
+        raise HTTPException(status_code=422, detail='User with the same phone or email already exists')

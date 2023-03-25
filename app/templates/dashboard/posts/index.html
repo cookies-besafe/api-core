@@ -1,0 +1,64 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}
+Posts
+{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h3>Add new post</h3>
+            <form action="{{url_for('dashboard_posts_store')}}" method="POST">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Content</label>
+                    <textarea name="content" required class="form-control"></textarea>
+                </div>
+                <div class="form-group my-3">
+                    <button class="btn btn-success w-100">Add</button>
+                </div>
+            </form>
+            <hr>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Created at</th>
+                        <th>Title</th>
+                        <th>Content</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts %}
+                        <tr>
+                            <td>{{post.created_at}}</td>
+                            <td>{{post.title}}</td>
+                            <td>{{post.content}}</td>
+                            <td>
+                                <a href="{{url_for('dashboard_posts_edit', page=page, id=post.id)}}" class="btn btn-warning w-100 my-3">Edit</a>
+                                <form action="{{url_for('dashboard_posts_destroy', page=page, id=post.id)}}" method="POST">
+                                    <button class="btn btn-danger w-100">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    {% if page > 1 %}
+                    <li class="page-item"><a class="page-link" href="{{url_for('dashboard_posts_index', page=page-1)}}">Previous</a></li>
+                    {% endif %}
+                    {% if posts_count > 0 %}
+                    <li class="page-item"><a class="page-link" href="{{url_for('dashboard_posts_index', page=page+1)}}">Next</a></li>
+                    {% endif %}
+                </ul>
+              </nav>
+        </div>
+    </div>
+</section>
+{% endblock %}
