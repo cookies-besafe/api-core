@@ -9,5 +9,5 @@ class GetUserSerializer(BaseModel):
     last_name: str | None
     telegram_nickname: str | None
     home_address: str | None
-    birth_date: datetime | None
+    # birth_date: datetime | None
     gender: str | None

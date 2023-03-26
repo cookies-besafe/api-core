@@ -1,14 +1,14 @@
 {% extends 'dashboard/base.html' %}
 
 {% block title %}
-Sos Requests
+Sos Requests | History
 {% endblock %}
 
 {% block content %}
 <section class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <a href="{{url_for('dashboard_sos_requests_history', page=1)}}" class="w-100 btn btn-success">Non active | History</a>
+            <a href="{{url_for('dashboard_index', page=1)}}" class="w-100 btn btn-danger">Active</a>
         </div>
         <div class="col-md-10">
             <table class="table table-striped">
@@ -34,56 +34,14 @@ Sos Requests
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
                     {% if page > 1 %}
-                    <li class="page-item"><a class="page-link" href="{{url_for('dashboard_index', page=page-1)}}">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="{{url_for('dashboard_sos_requests_history', page=page-1)}}">Previous</a></li>
                     {% endif %}
                     {% if sos_requests_count > 0 %}
-                    <li class="page-item"><a class="page-link" href="{{url_for('dashboard_index', page=page+1)}}">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="{{url_for('dashboard_sos_requests_history', page=page+1)}}">Next</a></li>
                     {% endif %}
                 </ul>
               </nav>
         </div>
     </div>
 </section>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    const route = "{{url_for('dashboard_sos_requests')}}"
-    setInterval(function() {
-        const table = $('#data-live-sos');
-        $.ajax({
-
-          url: route,
-
-          type: "GET",
-
-
-          success: function (data) {
-            table.html('')
-            data.forEach(sos_request => {
-                table.append(
-                    `
-                        <tr>
-                            <td>${sos_request.id}</td>
-                            <td>${sos_request.user.first_name} ${sos_request.user.last_name} | ${sos_request.user.email}</td>
-                            <td>
-                                <a href="#" class="btn btn-info my-3">Show more</a>
-                            </td>
-                        </tr>
-                    `
-                )
-            });
-          },
-
-          error: function (data, msg) {
-
-              alert('Ошибка');
-              console.log(data, route)
-
-          }
-
-        });
-    }, 30000)
-    
-</script>
 {% endblock %}

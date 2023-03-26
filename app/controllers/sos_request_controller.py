@@ -41,25 +41,27 @@ async def switch_status(id: int, user: User=Depends(jwt_auth_middleware)):
     return await sos_request.update()
 
 
+customers = []
+# TODO: not updating dashboard
 @router.websocket("/{id}/location-live-update")
-async def location_live_update(id: int, websocket: WebSocket, user: User=Depends(jwt_auth_middleware)):
+async def location_live_update(id: int, websocket: WebSocket):
+    customers.append(websocket)
     await websocket.accept()
     connection = False
-    sos_request = await user.sos_requests.get_or_none(pk=id)
+    sos_request = await SosRequest.objects.get_or_none(pk=id)
     if sos_request is not None:
         connection = True
     while connection:
         data = await websocket.receive_text()
         if data:
-            latest_translocation = await sos_request.translcoation_histories.order_by("-created_at").first()
-            delta = datetime.now() - latest_translocation.created_at
-            if delta.total_seconds() >= 30:         
-                await TranslocationHistory.objects.create(
-                    lat=data.lat,
-                    long=data.long,
-                    sos_request=sos_request
-                )
-                response = json.dumps({
-                    "status": f"Location updated and saved to DB. Latitude: {data.lat}, longitude: {data.long}"
-                })
-                await websocket.send_text(response)
+            data = json.loads(data)
+            await TranslocationHistory.objects.create(
+                        lat=data.get('lat'),
+                        long=data.get('long'),
+                        sos_request=sos_request
+                    )
+            response = json.dumps({
+                "status": f"Location updated and saved to DB. Latitude: {data.get('lat')}, longitude: {data.get('long')}"
+            })
+            for customer in customers:
+                await customer.send_text(response)

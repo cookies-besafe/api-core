@@ -18,7 +18,7 @@ router = APIRouter(
 @router.get('/login', response_class=HTMLResponse)
 async def dashborad_login_page(request: Request, is_guest: bool=Depends(guest_middleware), error: str | None = None):
     if not is_guest:
-        return RedirectResponse(request.url_for('dashboard_index'))  
+        return RedirectResponse(request.url_for('dashboard_index', page=1))  
     return main.templates.TemplateResponse("dashboard/authentication/login.html", {
         'request': request,
         'error': error
@@ -36,7 +36,7 @@ async def dashboard_logout(request: Request, response: Response, is_guest: bool=
 @router.post('/login', response_class=HTMLResponse)
 async def dashboard_login(request: Request, response: Response, email: str = Form(...), password: str = Form(...), is_guest: bool=Depends(guest_middleware)):
     if not is_guest:
-        return RedirectResponse(request.url_for('dashboard_index'))  
+        return RedirectResponse(request.url_for('dashboard_index', page=1))  
     user = await User.objects.get_or_none(email=email)
     if user is None:
         return main.templates.TemplateResponse("dashboard/authentication/login.html", {
@@ -53,7 +53,7 @@ async def dashboard_login(request: Request, response: Response, email: str = For
             'request': request,
             'error': 'incorrect_permissions'
         })
-    response = RedirectResponse(request.url_for('dashboard_index'), status_code=303)  
+    response = RedirectResponse(request.url_for('dashboard_index', page=1), status_code=303)  
     CookieService.set_cookie(response=response, access_token=JWTService.create_token_by_user(user))
     return response
 
