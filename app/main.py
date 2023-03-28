@@ -14,6 +14,7 @@ from app.controllers.dashboard import users_controller as dash_user_controller
 from app.controllers.dashboard import shelters_controller as dash_shelter_controller
 from app.controllers.dashboard import dashboard_controller
 from app.controllers.dashboard import posts_controller as dash_post_controller
+from app.services.connection_service import ConnectionService
 
 
 app = FastAPI(title="Emergency Button Core API")
@@ -22,6 +23,7 @@ app = FastAPI(title="Emergency Button Core API")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 
+connection_service = ConnectionService()
 
 app.include_router(authentication_controller.router)
 app.include_router(trusted_contacts_controller.router)

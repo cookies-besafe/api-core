@@ -1,6 +1,6 @@
 from ormar.exceptions import NoMatch
 from typing import List
-from fastapi import APIRouter, Depends, Request, WebSocket
+from fastapi import APIRouter, Depends, Request, WebSocket, WebSocketDisconnect
 from app.models.user import User
 from app.models.sos_request import SosRequest
 from app.helpers.middlewares import dashboard_middleware

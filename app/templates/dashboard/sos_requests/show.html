@@ -37,10 +37,11 @@ Sos Requests | History
     $(document).ready(
         $('iframe').attr('src', "https://www.google.com/maps/embed/v1/place?q={{current_location.lat}}, {{current_location.long}}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8")
     )
-    const ws = new WebSocket("ws://127.0.0.1:8008/api/sos-request/{{sos_request.id}}/location-live-update");
+    const ws = new WebSocket("ws://35.185.27.27/api/sos-request/{{sos_request.id}}/location-live-update");
     ws.onmessage = function(event) {
         console.log(event)
-        $('iframe').attr('src', `https://www.google.com/maps/embed/v1/place?q=${event.data.lat}, ${event.data.long}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`)
+        let data = JSON.parse(event.data)
+        $('iframe').attr('src', `https://www.google.com/maps/embed/v1/place?q=${data.lat}, ${data.long}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`)
     };
 </script>
 {% endblock %}

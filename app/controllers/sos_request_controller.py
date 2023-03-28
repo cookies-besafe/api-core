@@ -1,9 +1,10 @@
 import json
+from app import main
 from datetime import datetime
 from typing import List
 from app.models.user import User
 from app.models.sos_request import SosRequest
-from fastapi import APIRouter, Depends, HTTPException, WebSocket
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from app.helpers.middlewares import jwt_auth_middleware
 from app.models.translocation_history import TranslocationHistory
 from app.serializers.sos_requests.get_sos_request_serializer import GetSosRequestSerializer
@@ -41,19 +42,16 @@ async def switch_status(id: int, user: User=Depends(jwt_auth_middleware)):
     return await sos_request.update()
 
 
-customers = []
-# TODO: not updating dashboard
 @router.websocket("/{id}/location-live-update")
 async def location_live_update(id: int, websocket: WebSocket):
-    customers.append(websocket)
-    await websocket.accept()
-    connection = False
-    sos_request = await SosRequest.objects.get_or_none(pk=id)
-    if sos_request is not None:
-        connection = True
-    while connection:
-        data = await websocket.receive_text()
-        if data:
+    await main.connection_service.connect(websocket=websocket)
+    try:
+        connection = False
+        sos_request = await SosRequest.objects.get_or_none(pk=id)
+        if sos_request is not None:
+            connection = True   
+        while connection:
+            data = await websocket.receive_text()
             data = json.loads(data)
             await TranslocationHistory.objects.create(
                         lat=data.get('lat'),
@@ -61,7 +59,10 @@ async def location_live_update(id: int, websocket: WebSocket):
                         sos_request=sos_request
                     )
             response = json.dumps({
-                "status": f"Location updated and saved to DB. Latitude: {data.get('lat')}, longitude: {data.get('long')}"
+                "lat": data.get('lat'),
+                "long": data.get('long')
             })
-            for customer in customers:
-                await customer.send_text(response)
+            await main.connection_service.broadcast(response)
+    except WebSocketDisconnect:
+        await main.connection_service.disconnect(websocket)
+        await main.connection_service.broadcast(f"Sos request #{id} left")
