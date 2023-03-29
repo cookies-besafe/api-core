@@ -10,6 +10,6 @@ class TrustedContact(ormar.Model):
     id: int = ormar.Integer(primary_key=True)
     name: str = ormar.String(max_length=255, nullable=False)
     phone: str = ormar.String(max_length=20, nullable=False)
-    email: str = ormar.String(max_length=20, nullable=True)
+    email: str = ormar.String(max_length=255, nullable=True)
     telegram_nickname: str = ormar.String(max_length=20, nullable=True)
     user: Optional[Union[User, dict]] = ormar.ForeignKey(User, related_name="trusted_contacts", ondelete="RESTRICT")
