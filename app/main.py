@@ -39,10 +39,20 @@ app.include_router(dash_post_controller.router)
 
 @app.get("/")
 async def root():
-    # create a dummy entry
-    # from app.models.user import User
-    # from app.services.hasher_service import HasherService
-    # await User.objects.get_or_create(email="admin@gmail.com", is_staff=True, password=HasherService.get_password_hash('admin'))
+    create a dummy entry
+    from app.models.user import User
+    from app.services.hasher_service import HasherService
+    await User.objects.get_or_create(
+        email="admin@gmail.com", 
+        is_staff=True, 
+        password=HasherService.get_password_hash('admin'),
+        first_name="admin",
+        last_name="maxima",
+        phone="228",
+        telegram_nickname="",
+        home_address="",
+        gender="non-binary"
+        )
     return {'detail': 'Root'}
 
 

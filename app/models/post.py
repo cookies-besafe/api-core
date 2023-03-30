@@ -11,5 +11,5 @@ class Post(ormar.Model):
     id: int = ormar.Integer(primary_key=True)
     title: str = ormar.String(max_length=255, nullable=False)
     content: str = ormar.Text(nullable=False)
-    created_at: datetime = ormar.DateTime(timezone=True, default=datetime.now())
+    created_at: datetime = ormar.DateTime(timezone=True, default=datetime.now)
     user: Optional[Union[User, dict]] = ormar.ForeignKey(User, related_name="posts", ondelete="RESTRICT")

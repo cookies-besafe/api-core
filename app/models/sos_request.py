@@ -11,4 +11,4 @@ class SosRequest(ormar.Model):
     id: int = ormar.Integer(primary_key=True)
     is_active: bool = ormar.Boolean(default=True)
     user: Optional[Union[User, dict]] = ormar.ForeignKey(User, related_name="sos_requests", ondelete="RESTRICT")
-    created_at: datetime = ormar.DateTime(timezone=True, default=datetime.now())
+    created_at: datetime = ormar.DateTime(timezone=True, default=datetime.now)

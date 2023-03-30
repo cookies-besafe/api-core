@@ -12,4 +12,4 @@ class TranslocationHistory(ormar.Model):
     lat: float = ormar.Float(nullable=False)
     long: float = ormar.Float(nullable=False)
     sos_request: Optional[Union[SosRequest, dict]] = ormar.ForeignKey(SosRequest, related_name="translocation_histories", ondelete="RESTRICT")
-    created_at: datetime = ormar.DateTime(timezone=True, default=datetime.now())
+    created_at: datetime = ormar.DateTime(timezone=True, default=datetime.now)
