@@ -25,7 +25,6 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 
 connection_service = ConnectionService()
-smtp_service = SMTPService()
 
 app.include_router(authentication_controller.router)
 app.include_router(trusted_contacts_controller.router)
@@ -38,6 +37,7 @@ app.include_router(dash_auth_controller.router)
 app.include_router(dash_shelter_controller.router)
 app.include_router(dash_post_controller.router)
 
+# smtp_service = SMTPService()
 
 @app.get("/")
 async def root():
