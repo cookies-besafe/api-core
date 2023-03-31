@@ -26,7 +26,15 @@ async def index(user: User=Depends(jwt_auth_middleware)):
 async def store(user: User=Depends(jwt_auth_middleware)):
     active_sos_requests_count = await user.sos_requests.filter(is_active=True).count()
     if active_sos_requests_count > 0:
-        return await SosRequest.objects.filter(is_active=True).select_related('user').first() 
+        return await SosRequest.objects.filter(is_active=True).select_related('user').first()
+    email_list = [trusted_contact.email for trusted_contact in user.trusted_contacts.all()]
+    main.smtp_service.send_email_async(
+        f"SOS! {user.first_name} {user.last_name} is in danger!", 
+        email_to_list=email_list,
+        body={
+            'name': f"{user.first_name} {user.last_name}"
+        }
+    ) 
     return await SosRequest.objects.create(user=user)
 
 

@@ -12,5 +12,3 @@ migrate:
 	docker exec -it python_container python3 migrate.py
 enter_db:
 	docker exec -it db_container psql --username=core_db_user --dbname=core_db
-
-
