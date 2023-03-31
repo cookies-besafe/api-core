@@ -25,6 +25,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 
 connection_service = ConnectionService()
+# smtp_service = SMTPService()
 
 app.include_router(authentication_controller.router)
 app.include_router(trusted_contacts_controller.router)
@@ -37,10 +38,26 @@ app.include_router(dash_auth_controller.router)
 app.include_router(dash_shelter_controller.router)
 app.include_router(dash_post_controller.router)
 
-# smtp_service = SMTPService()
 
 @app.get("/")
 async def root():
+    # create a dummy entry
+    try:
+        from app.models.user import User
+        from app.services.hasher_service import HasherService
+        await User.objects.get_or_create(
+            email="admin@gmail.com", 
+            is_staff=True, 
+            password=HasherService.get_password_hash('admin'),
+            gender="none",
+            home_address="",
+            telegram_nickname="",
+            phone="",
+            first_name="admin",
+            last_name="admin"
+            )
+    except:
+        pass
     return {'detail': 'Root'}
 
 
