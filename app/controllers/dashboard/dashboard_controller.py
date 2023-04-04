@@ -77,9 +77,9 @@ async def dashboard_sos_requests_show(request: Request, id: int, user: User=Depe
     })
 
 
-@router.get('/sos-requests/{hash}', response_class=HTMLResponse)
-async def dashboard_sos_requests_show(request: Request, hash: str):
-    sos_request = await SosRequest.objects.select_related('user').get_or_none(hash=id)
+@router.get('/sos-requests-public/{hash}', response_class=HTMLResponse)
+async def dashboard_sos_requests_public_show(request: Request, hash: str):
+    sos_request = await SosRequest.objects.select_related('user').get_or_none(hash=hash)
     if sos_request is None:
         return RedirectResponse(request.url_for('dashboard_index', page=1))
     try:

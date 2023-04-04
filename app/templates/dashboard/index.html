@@ -10,12 +10,13 @@ Sos Requests
         <div class="col-md-8">
             <a href="{{url_for('dashboard_sos_requests_history', page=1)}}" class="w-100 btn btn-success">Non active | History</a>
         </div>
-        <div class="col-md-10">
+        <div class="col-md-12">
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>User</th>
+                        <th>Public link</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -24,6 +25,7 @@ Sos Requests
                     <tr>
                         <td>{{sos_request.id}}</td>
                         <td>{{sos_request.user.first_name}} {{sos_request.user.last_name}} | {{sos_request.user.email}}</td>
+                        <td><a href="{{url_for('dashboard_sos_requests_public_show', hash=sos_request.hash)}}">Public link</a></td>
                         <td>
                             <a href="{{url_for('dashboard_sos_requests_show', id=sos_request.id)}}" class="btn btn-info my-3">Show more</a>
                         </td>
