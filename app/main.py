@@ -15,6 +15,7 @@ from app.controllers.dashboard import shelters_controller as dash_shelter_contro
 from app.controllers.dashboard import dashboard_controller
 from app.controllers.dashboard import posts_controller as dash_post_controller
 from app.services.connection_service import ConnectionService
+from app.services.smtp_service import SMTPService
 
 
 app = FastAPI(title="Emergency Button Core API")
@@ -24,6 +25,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 
 connection_service = ConnectionService()
+# smtp_service = SMTPService()
 
 app.include_router(authentication_controller.router)
 app.include_router(trusted_contacts_controller.router)
