@@ -1,0 +1,47 @@
+{% extends 'dashboard/public_base.html' %}
+
+{% block title %}
+Sos Requests | History
+{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h3>Sos Request</h3>
+            <h2>{{sos_request.user.first_name}} {{sos_request.user.last_name}} | {{sos_request.user.email}}</h2>
+            <div class="my-5">
+                <div 
+                    style="max-width:100%;list-style:none; transition: none;overflow:hidden;width:100%;height:500px;">
+                    <div id="google-maps-canvas" style="height:100%; width:100%;max-width:100%;">
+                        <iframe style="height:100%;width:100%;border:0;" frameborder="0" src=""></iframe>
+                    </div>
+                    <style>
+                        #google-maps-canvas img.text-marker{
+                            max-width:none!important;
+                            background:none!important;
+                        }
+                        img{
+                            max-width:none
+                            }
+                        </style>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(
+        $('iframe').attr('src', "https://www.google.com/maps/embed/v1/place?q={{current_location.lat}}, {{current_location.long}}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8")
+    )
+    const ws = new WebSocket("ws://35.185.27.27/api/sos-request/{{sos_request.id}}/location-live-update");
+    ws.onmessage = function(event) {
+        console.log(event)
+        let data = JSON.parse(event.data)
+        $('iframe').attr('src', `https://www.google.com/maps/embed/v1/place?q=${data.lat}, ${data.long}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`)
+    };
+</script>
+{% endblock %}

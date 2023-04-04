@@ -1,4 +1,6 @@
 import json
+import random
+import string
 from app import main
 from datetime import datetime
 from typing import List
@@ -27,7 +29,9 @@ async def store(user: User=Depends(jwt_auth_middleware)):
     active_sos_requests_count = await user.sos_requests.filter(is_active=True).count()
     if active_sos_requests_count > 0:
         return await SosRequest.objects.filter(is_active=True).select_related('user').first() 
-    return await SosRequest.objects.create(user=user)
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(255))
+    return await SosRequest.objects.create(user=user, hash=result_str)
 
 
 @router.patch("/{id}", response_model=GetSosRequestSerializer)

@@ -75,3 +75,22 @@ async def dashboard_sos_requests_show(request: Request, id: int, user: User=Depe
         'sos_request': sos_request,
         'current_location': current_location,
     })
+
+
+@router.get('/sos-requests/{hash}', response_class=HTMLResponse)
+async def dashboard_sos_requests_show(request: Request, hash: str):
+    sos_request = await SosRequest.objects.select_related('user').get_or_none(hash=id)
+    if sos_request is None:
+        return RedirectResponse(request.url_for('dashboard_index', page=1))
+    try:
+        current_location = await sos_request.translocation_histories.order_by('-created_at').first()
+    except NoMatch:
+        current_location = {
+            "lat": 0,
+            "long": 0
+        }
+    return main.templates.TemplateResponse("dashboard/sos_requests/public_show.html", {
+        'request': request,
+        'sos_request': sos_request,
+        'current_location': current_location,
+    })
