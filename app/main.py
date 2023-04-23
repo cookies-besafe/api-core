@@ -58,6 +58,15 @@ async def root():
             )
     except:
         pass
+    from app.models.sos_request import SosRequest
+    from app.models.translocation_history import TranslocationHistory
+    # user = await User.objects.get(email="admin@gmail.com")
+    # req = await SosRequest.objects.create(user=user)
+    # await TranslocationHistory.objects.create(sos_request=req, lat=23.212, long=22.323)
+    # await TranslocationHistory.objects.create(sos_request=req, lat=65.212, long=43.323)
+    req = await SosRequest.objects.first()
+    req.hash='asdasdasdasdasd'
+    await req.update()
     return {'detail': 'Root'}
 
 

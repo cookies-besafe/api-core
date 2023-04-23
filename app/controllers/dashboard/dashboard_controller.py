@@ -62,9 +62,10 @@ async def dashboard_sos_requests_show(request: Request, id: int, user: User=Depe
     sos_request = await SosRequest.objects.select_related('user').get_or_none(pk=id)
     if sos_request is None:
         return RedirectResponse(request.url_for('dashboard_index', page=1))
+    translocation_history = await sos_request.translocation_histories.order_by('-created_at').all()
     try:
-        current_location = await sos_request.translocation_histories.order_by('-created_at').first()
-    except NoMatch:
+        current_location = translocation_history[0]
+    except IndexError:
         current_location = {
             "lat": 0,
             "long": 0
@@ -74,6 +75,7 @@ async def dashboard_sos_requests_show(request: Request, id: int, user: User=Depe
         'current_user': user,
         'sos_request': sos_request,
         'current_location': current_location,
+        'translocation_history': translocation_history,
     })
 
 
@@ -82,9 +84,10 @@ async def dashboard_sos_requests_public_show(request: Request, hash: str):
     sos_request = await SosRequest.objects.select_related('user').get_or_none(hash=hash)
     if sos_request is None:
         return RedirectResponse(request.url_for('dashboard_index', page=1))
+    translocation_history = await sos_request.translocation_histories.order_by('-created_at').all()
     try:
-        current_location = await sos_request.translocation_histories.order_by('-created_at').first()
-    except NoMatch:
+        current_location = translocation_history[0]
+    except IndexError:
         current_location = {
             "lat": 0,
             "long": 0
@@ -93,4 +96,5 @@ async def dashboard_sos_requests_public_show(request: Request, hash: str):
         'request': request,
         'sos_request': sos_request,
         'current_location': current_location,
+        'translocation_history': translocation_history,
     })

@@ -7,14 +7,64 @@ Sos Requests | History
 {% block content %}
 <section class="container">
     <div class="row justify-content-center">
-        <div class="col-md-10">
-            <h3>Sos Request</h3>
-            <h2>{{sos_request.user.first_name}} {{sos_request.user.last_name}} | {{sos_request.user.email}}</h2>
-            <div class="my-5">
+        <div class="col-md-12">
+            <div class="row my-5">
+                <div class="col-md-4 py-5">
+                    <h3>Sos Request</h3>
+                    <ul>
+                        <li>
+                            <b>Name: </b> {{sos_request.user.first_name}} {{sos_request.user.last_name}}
+                        </li>
+                        <li>
+                            <b>Email: </b> {{sos_request.user.email}}
+                        </li>
+                        <li>
+                            <h4>Translocation history</h4>
+                            <ul>
+                                {% for translocation in translocation_history %}
+                                <li style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#exampleModal" class="translocation-elem" data-created_at="{{translocation.created_at}}" data-lat="{{translocation.lat}}" data-long="{{translocation.long}}">{{translocation.created_at}}</li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-8 py-5">
+                    <div>
+                        <div 
+                            style="max-width:100%;list-style:none; transition: none;overflow:hidden;width:100%;height:500px;">
+                            <div id="google-maps-canvas" style="height:100%; width:100%;max-width:100%;">
+                                <iframe id="main-map" style="height:100%;width:100%;border:0;" frameborder="0" src=""></iframe>
+                            </div>
+                            <style>
+                                #google-maps-canvas img.text-marker{
+                                    max-width:none!important;
+                                    background:none!important;
+                                }
+                                img{
+                                    max-width:none
+                                    }
+                                </style>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel"></h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div>
                 <div 
                     style="max-width:100%;list-style:none; transition: none;overflow:hidden;width:100%;height:500px;">
                     <div id="google-maps-canvas" style="height:100%; width:100%;max-width:100%;">
-                        <iframe style="height:100%;width:100%;border:0;" frameborder="0" src=""></iframe>
+                        <iframe id="additional-map" style="height:100%;width:100%;border:0;" frameborder="0" src=""></iframe>
                     </div>
                     <style>
                         #google-maps-canvas img.text-marker{
@@ -28,20 +78,38 @@ Sos Requests | History
                 </div>
             </div>
         </div>
+      </div>
     </div>
-</section>
+  </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
     $(document).ready(
-        $('iframe').attr('src', "https://www.google.com/maps/embed/v1/place?q={{current_location.lat}}, {{current_location.long}}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8")
+        $('#main-map').attr('src', "https://www.google.com/maps/embed/v1/place?q={{current_location.lat}}, {{current_location.long}}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8")
     )
     const ws = new WebSocket("ws://35.185.27.27/api/sos-request/{{sos_request.id}}/location-live-update");
     ws.onmessage = function(event) {
         console.log(event)
         let data = JSON.parse(event.data)
-        $('iframe').attr('src', `https://www.google.com/maps/embed/v1/place?q=${data.lat}, ${data.long}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`)
+        $('#main-map').attr('src', `https://www.google.com/maps/embed/v1/place?q=${data.lat}, ${data.long}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`)
     };
+
+
+    const exampleModal = document.getElementById('exampleModal')
+    const exampleModalLabel = $('#exampleModalLabel')
+    const additionalMap = $('#additional-map')
+    if (exampleModal) {
+    exampleModal.addEventListener('show.bs.modal', event => {
+        // Button that triggered the modal
+        const button = event.relatedTarget
+        let data = {
+            lat: button.getAttribute('data-lat'),
+            long: button.getAttribute('data-long')
+        }
+        exampleModalLabel.html(button.getAttribute('data-created_at'))
+        additionalMap.attr('src', `https://www.google.com/maps/embed/v1/place?q=${data.lat}, ${data.long}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`)
+    })
+    }
 </script>
 {% endblock %}
