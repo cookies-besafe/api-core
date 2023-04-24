@@ -15,4 +15,4 @@ router = APIRouter(
 
 @router.get('/', response_model=List[GetShelterSerializer])
 async def index(user: User=Depends(jwt_auth_middleware)):
-    return await Shelter.objects.select_related('user').all()
+    return await Shelter.objects.all()
